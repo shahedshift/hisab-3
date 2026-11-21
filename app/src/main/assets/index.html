@@ -1,511 +1,1504 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>বাইতুন নাজাত জামে মসজিদ - হিসাব</title>
-<style>
-  :root { --bg:#f4f7f5; --card:#fff; --text:#1d2a22; --muted:#6b7a70; --accent:#1f7a4d; --danger:#b03a2e; --line:#dfe6e1; }
-  * { box-sizing:border-box; }
-  body { margin:0; font-family:"Noto Sans Bengali","Kalpurush",system-ui,sans-serif; background:var(--bg); color:var(--text); padding-bottom:64px; }
-  button { font:inherit; background:var(--accent); color:#fff; border:0; border-radius:8px; padding:9px 13px; cursor:pointer; }
-  button.ghost { background:#fff; color:var(--accent); border:1px solid var(--accent); }
-  button.danger { background:#fff; color:var(--danger); border:1px solid var(--danger); }
-  button.small { padding:4px 8px; font-size:12px; }
-  input, select, textarea { font:inherit; width:100%; padding:9px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--text); }
-  textarea { min-height:90px; font-size:12px; }
-  header { background:var(--accent); color:#fff; padding:12px 16px; }
-  header h1 { font-size:17px; margin:0; }
-  header .sub { font-size:12px; opacity:.85; }
-  nav { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--line); display:flex; overflow-x:auto; }
-  nav button { flex:0 0 auto; min-width:25%; background:none; color:var(--muted); border-radius:0; padding:11px 8px; font-size:13px; }
-  nav button.active { color:var(--accent); font-weight:700; }
-  main { padding:14px; max-width:740px; margin:auto; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:14px; }
-  .card h2 { font-size:16px; margin:0 0 10px; }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .row { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
-  .row > * { flex:1 1 140px; }
-  .row > button { flex:0 0 auto; }
-  table { width:100%; border-collapse:collapse; font-size:14px; }
-  th, td { padding:7px 5px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
-  th { color:var(--muted); font-weight:600; font-size:12px; }
-  .num { text-align:right; white-space:nowrap; }
-  .in { color:var(--accent); } .out { color:var(--danger); }
-  .big { font-size:21px; font-weight:700; }
-  .muted { color:var(--muted); font-size:13px; }
-  .hidden { display:none !important; }
-  .tag { display:inline-block; background:#eef5f0; color:var(--accent); border-radius:6px; padding:2px 7px; font-size:12px; margin:2px; }
-  .tag.adv { background:#fff4e0; color:#8a5a00; }
-  .tag.settled { background:#e8f5ec; color:var(--accent); }
-  #cover { position:fixed; inset:0; background:linear-gradient(160deg,#1f7a4d,#0f4d30); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; z-index:50; }
-  #cover .arabic { font-size:34px; margin-bottom:14px; }
-  #cover h1 { font-size:24px; margin:8px 0; line-height:1.4; }
-  #cover p { opacity:.9; margin:6px 0 26px; }
-  #cover button { background:#fff; color:var(--accent); padding:12px 34px; font-size:16px; font-weight:700; }
-  .setting-acc { display:grid; grid-template-columns:1.4fr 1fr auto; gap:6px; margin-bottom:6px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>মসজিদ হিসাবরক্ষণ ও লেজার সিস্টেম</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 80px;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        @media print {
+            body { background: white !important; padding: 0 !important; }
+            .no-print { display: none !important; }
+            #print-area { display: block !important; width: 100%; }
+        }
+    </style>
 </head>
-<body>
+<body class="text-gray-800">
 
-<!-- ============ কভার পেজ ============ -->
-<div id="cover">
-  <div class="arabic">بَيْتُ النَّجَاةِ</div>
-  <h1 id="coverName">বাইতুন নাজাত জামে মসজিদ</h1>
-  <p>মসজিদের আয়-ব্যয় ও হিসাব ব্যবস্থাপনা</p>
-  <button onclick="startApp()">শুরু করুন</button>
-</div>
+    <!-- Top Header -->
+    <header class="bg-emerald-800 text-white p-4 sticky top-0 z-30 shadow-md no-print flex justify-between items-center">
+        <div>
+            <h1 class="text-lg font-bold leading-tight" id="header-mosque-name">বায়তুন নাজাত জামে মসজিদ</h1>
+            <p class="text-xs text-emerald-200">অফলাইন হিসাব ও লেজার ব্যবস্থাপনা</p>
+        </div>
+        <button onclick="openMosqueModal()" class="bg-emerald-700 hover:bg-emerald-600 px-3 py-1.5 rounded-lg text-xs font-medium border border-emerald-600">
+            ⚙️ সেটিংস
+        </button>
+    </header>
 
-<header>
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-    <div><h1 id="hdrName">বাইতুন নাজাত জামে মসজিদ</h1><div class="sub">হিসাব ব্যবস্থাপনা</div></div>
-    <select id="monthSel" style="width:auto;padding:6px"></select>
-  </div>
-</header>
+    <!-- Main Content Container -->
+    <main class="max-w-xl mx-auto p-3 space-y-4 no-print">
 
-<main>
+        <!-- ==================== TAB 1: DASHBOARD ==================== -->
+        <section id="tab-dashboard" class="space-y-4">
+            <!-- Month & Year Filter -->
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between gap-2">
+                <div class="flex gap-2 flex-1">
+                    <select id="dash-month" onchange="renderDashboard()" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-2.5 py-2 text-sm font-semibold text-gray-700 focus:outline-none focus:border-emerald-600">
+                        <option value="0">জানুয়ারি</option>
+                        <option value="1">ফেব্রুয়ারি</option>
+                        <option value="2">মার্চ</option>
+                        <option value="3">এপ্রিল</option>
+                        <option value="4">মে</option>
+                        <option value="5">জুন</option>
+                        <option value="6">জুলাই</option>
+                        <option value="7">আগস্ট</option>
+                        <option value="8">সেপ্টেম্বর</option>
+                        <option value="9">অক্টোবর</option>
+                        <option value="10">নভেম্বর</option>
+                        <option value="11">ডিসেম্বর</option>
+                    </select>
+                    <select id="dash-year" onchange="renderDashboard()" class="w-28 bg-gray-50 border border-gray-300 rounded-lg px-2.5 py-2 text-sm font-semibold text-gray-700 focus:outline-none focus:border-emerald-600">
+                    </select>
+                </div>
+                <button onclick="printMonthlyReport()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1 shrink-0 shadow-sm">
+                    📄 PDF রিপোর্ট
+                </button>
+            </div>
 
-<!-- ============ মাসিক ============ -->
-<section id="tab-month">
-  <div class="card">
-    <h2>মাসের সারসংক্ষেপ</h2>
-    <div class="grid2">
-      <div><div class="muted">মোট আয়</div><div class="big in" id="mIncome">০</div></div>
-      <div><div class="muted">মোট ব্যয়</div><div class="big out" id="mExpense">০</div></div>
+            <!-- 1. Current Month Income & Expense (First Priority per Requirement) -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h2 class="text-sm font-bold text-gray-700">চলতি মাসের আয় ও ব্যয় হিসাব</h2>
+                    <span id="dash-selected-label" class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold"></span>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
+                        <p class="text-xs text-emerald-700 font-medium">মোট আয় (চলতি মাস)</p>
+                        <p class="text-xl font-bold text-emerald-800 mt-1" id="dash-month-income">৳ ০</p>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-200 p-3 rounded-xl">
+                        <p class="text-xs text-rose-700 font-medium">মোট ব্যয় (চলতি মাস)</p>
+                        <p class="text-xl font-bold text-rose-800 mt-1" id="dash-month-expense">৳ ০</p>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-2.5 rounded-lg flex justify-between items-center border border-gray-200">
+                    <span class="text-xs font-semibold text-gray-600">চলতি মাসের নিট উদ্বৃত্ত / ঘাটতি:</span>
+                    <span class="text-sm font-bold" id="dash-month-net">৳ ০</span>
+                </div>
+            </div>
+
+            <!-- 2. Previous Cash & Bank Balance + Closing Balance (Second Priority per Requirement) -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <h2 class="text-sm font-bold text-gray-700 border-b pb-2">পূর্ববর্তী জের ও বর্তমান স্থিতি (ক্যাশ ও ব্যাংক)</h2>
+                
+                <!-- Previous Balance -->
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="bg-amber-50/70 border border-amber-200 p-2.5 rounded-lg">
+                        <span class="text-amber-800 block">আগের মাসের ক্যাশ জের</span>
+                        <span class="text-base font-bold text-amber-900" id="dash-prev-cash">৳ ০</span>
+                    </div>
+                    <div class="bg-blue-50/70 border border-blue-200 p-2.5 rounded-lg">
+                        <span class="text-blue-800 block">আগের মাসের ব্যাংক জের</span>
+                        <span class="text-base font-bold text-blue-900" id="dash-prev-bank">৳ ০</span>
+                    </div>
+                </div>
+
+                <!-- Closing Balance -->
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <div class="bg-slate-800 text-white p-3 rounded-xl">
+                        <p class="text-[11px] text-slate-300">বর্তমান হাতে নগদ (Cash)</p>
+                        <p class="text-lg font-bold mt-0.5" id="dash-curr-cash">৳ ০</p>
+                    </div>
+                    <div class="bg-indigo-900 text-white p-3 rounded-xl">
+                        <p class="text-[11px] text-indigo-200">বর্তমান ব্যাংক ব্যালেন্স</p>
+                        <p class="text-lg font-bold mt-0.5" id="dash-curr-bank">৳ ০</p>
+                    </div>
+                </div>
+                <div class="bg-emerald-900 text-white p-3 rounded-xl flex justify-between items-center">
+                    <span class="text-xs font-medium text-emerald-200">সর্বমোট তহবিল (ক্যাশ + ব্যাংক):</span>
+                    <span class="text-lg font-bold" id="dash-total-fund">৳ ০</span>
+                </div>
+            </div>
+
+            <!-- Recent Transactions with Corner Edit Button -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                <div class="flex justify-between items-center border-b pb-2 mb-3">
+                    <h3 class="text-sm font-bold text-gray-700">এই মাসের লেনদেন সমূহ</h3>
+                    <span class="text-[11px] text-gray-400">সংশোধনের জন্য কোনায় এডিট বাটন চাপুন</span>
+                </div>
+                <div id="dash-tx-list" class="space-y-2.5"></div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: RECEIPT BOOKS & ENTRY ==================== -->
+        <section id="tab-receipts" class="hidden space-y-4">
+            <!-- Sub-navigation -->
+            <div class="grid grid-cols-3 bg-gray-200 p-1 rounded-xl text-xs font-bold">
+                <button onclick="switchReceiptSub('entry')" id="rsub-btn-entry" class="py-2 rounded-lg bg-white text-emerald-800 shadow-sm">রশিদ এন্ট্রি</button>
+                <button onclick="switchReceiptSub('books')" id="rsub-btn-books" class="py-2 rounded-lg text-gray-600">নতুন বই যুক্ত</button>
+                <button onclick="switchReceiptSub('audit')" id="rsub-btn-audit" class="py-2 rounded-lg text-gray-600">বইভিত্তিক হিসাব</button>
+            </div>
+
+            <!-- 2A: Batch Receipt Entry -->
+            <div id="rsub-entry" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <h2 class="text-sm font-bold text-gray-700 border-b pb-2">রশিদ বইয়ের পাতা অনুযায়ী আয় এন্ট্রি</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">রশিদ বই নির্বাচন করুন</label>
+                        <select id="entry-book-select" onchange="loadBookPagesForEntry()" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50 font-semibold"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">এন্ট্রির তারিখ</label>
+                        <input type="date" id="entry-date" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-gray-50">
+                    </div>
+                </div>
+
+                <div id="book-info-banner" class="hidden bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg text-xs text-emerald-900 flex justify-between items-center">
+                    <span id="book-info-text"></span>
+                    <span id="book-rem-pages" class="font-bold bg-emerald-200 px-2 py-0.5 rounded"></span>
+                </div>
+
+                <!-- Dynamic Page Rows -->
+                <div id="batch-pages-container" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+
+                <!-- Live Calculation Footer -->
+                <div id="batch-summary-bar" class="hidden bg-gray-900 text-white p-3 rounded-xl space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span>এন্ট্রিকৃত পাতা: <strong id="live-page-count" class="text-amber-400">০</strong> টি</span>
+                        <span>মোট টাকা: <strong id="live-total-amount" class="text-emerald-400 text-sm">৳ ০</strong></span>
+                    </div>
+                    <button onclick="saveBatchReceipts()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-sm shadow">
+                        রশিদ এন্ট্রি সেভ করুন
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2B: Add New Receipt Book -->
+            <div id="rsub-books" class="hidden space-y-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                    <h2 class="text-sm font-bold text-gray-700 border-b pb-2">নতুন রশিদ বই যুক্ত করুন</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">বই নং *</label>
+                            <input type="text" id="new-book-no" placeholder="যেমন: বই-০১" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">আয়ের খাত *</label>
+                            <select id="new-book-category" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-white"></select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">শুরুর পৃষ্ঠা নং *</label>
+                            <input type="number" id="new-book-start" placeholder="যেমন: 101" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">শেষ পৃষ্ঠা নং *</label>
+                            <input type="number" id="new-book-end" placeholder="যেমন: 150" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                        </div>
+                    </div>
+                    <button onclick="addNewReceiptBook()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-lg text-sm">
+                        + বই সংরক্ষণ করুন
+                    </button>
+                </div>
+
+                <!-- Saved Books List showing Book No, Category & Page Range -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-sm font-bold text-gray-700 border-b pb-2 mb-3">নিবন্ধিত রশিদ বইসমূহ</h3>
+                    <div id="registered-books-list" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- 2C: Book-wise Audit & Edit -->
+            <div id="rsub-audit" class="hidden bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <h2 class="text-sm font-bold text-gray-700 border-b pb-2">বইভিত্তিক মোট আদায় ও পাতা যাচাই</h2>
+                <select id="audit-book-select" onchange="renderBookAudit()" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm font-semibold bg-gray-50"></select>
+                <div id="audit-book-summary" class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs space-y-1"></div>
+                <div id="audit-pages-list" class="space-y-2 max-h-96 overflow-y-auto"></div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: INCOME / EXPENSE / BANK ==================== -->
+        <section id="tab-transactions" class="hidden space-y-4">
+            <!-- 3 Sub-tabs per Requirement: 1. সরাসরি আয়, 2. ব্যয় ভাউচার, 3. ক্যাশ - ব্যাংক -->
+            <div class="grid grid-cols-3 bg-gray-200 p-1 rounded-xl text-xs font-bold">
+                <button onclick="switchTxSub('income')" id="tsub-btn-income" class="py-2 rounded-lg bg-white text-emerald-800 shadow-sm">১। সরাসরি আয়</button>
+                <button onclick="switchTxSub('expense')" id="tsub-btn-expense" class="py-2 rounded-lg text-gray-600">২। ব্যয় ভাউচার</button>
+                <button onclick="switchTxSub('bank')" id="tsub-btn-bank" class="py-2 rounded-lg text-gray-600">৩। ক্যাশ - ব্যাংক</button>
+            </div>
+
+            <!-- 3A: Direct Income (সরাসরি আয়) -->
+            <div id="tsub-income" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <h2 class="text-sm font-bold text-emerald-800 border-b pb-2">সরাসরি আয় এন্ট্রি (দান বক্স, ফলমূল/মালামাল বিক্রি ইত্যাদি)</h2>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">তারিখ</label>
+                    <input type="date" id="inc-date" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">আয়ের খাত</label>
+                    <select id="inc-category" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-white"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">টাকার পরিমাণ *</label>
+                        <input type="number" id="inc-amount" placeholder="0" class="w-full border border-gray-300 rounded-lg p-2 text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">জমার মাধ্যম</label>
+                        <select id="inc-mode" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-white">
+                            <option value="cash">হাতে নগদ (Cash)</option>
+                            <option value="bank">সরাসরি ব্যাংক (Bank)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">বিবরণ / নোট</label>
+                    <input type="text" id="inc-note" placeholder="যেমন: জুমার দান বক্স খোলা বা নারিকেল বিক্রি" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                </div>
+                <button onclick="saveDirectIncome()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-lg text-sm">
+                    সরাসরি আয় সেভ করুন
+                </button>
+            </div>
+
+            <!-- 3B: Expense Voucher (ব্যয় ভাউচার) -->
+            <div id="tsub-expense" class="hidden bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <h2 class="text-sm font-bold text-rose-800 border-b pb-2">ব্যয় ভাউচার এন্ট্রি (বেতন, সম্মানী, বিল ও খরচ)</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">তারিখ</label>
+                        <input type="date" id="exp-date" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">ভাউচার নং</label>
+                        <input type="text" id="exp-voucher" placeholder="যেমন: V-101" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">ব্যয়ের খাত</label>
+                    <select id="exp-category" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-white"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">খরচের পরিমাণ *</label>
+                        <input type="number" id="exp-amount" placeholder="0" class="w-full border border-gray-300 rounded-lg p-2 text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">পরিশোধের মাধ্যম</label>
+                        <select id="exp-mode" class="w-full border border-gray-300 rounded-lg p-2 text-sm bg-white">
+                            <option value="cash">নগদ ক্যাশ (Cash)</option>
+                            <option value="bank">ব্যাংক চেক/ট্রান্সফার</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">বিবরণ / কাকে দেওয়া হলো</label>
+                    <input type="text" id="exp-note" placeholder="যেমন: ইমাম সাহেবের বেতন বা মাহফিল বক্তার সম্মানী" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                </div>
+                <button onclick="saveExpenseVoucher()" class="w-full bg-rose-700 hover:bg-rose-800 text-white font-bold py-2.5 rounded-lg text-sm">
+                    ব্যয় ভাউচার সেভ করুন
+                </button>
+            </div>
+
+            <!-- 3C: Cash - Bank Transfer (ক্যাশ - ব্যাংক) -->
+            <div id="tsub-bank" class="hidden bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <h2 class="text-sm font-bold text-indigo-800 border-b pb-2">ক্যাশ ও ব্যাংক লেনদেন (Contra Entry)</h2>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">তারিখ</label>
+                    <input type="date" id="bank-date" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">লেনদেনের ধরন</label>
+                    <select id="bank-type" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm font-semibold bg-indigo-50 text-indigo-900">
+                        <option value="cash_to_bank">ক্যাশ থেকে ব্যাংকে জমা (Cash ➔ Bank)</option>
+                        <option value="bank_to_cash">ব্যাংক থেকে ক্যাশে উত্তোলন (Bank ➔ Cash)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">টাকার পরিমাণ *</label>
+                    <input type="number" id="bank-amount" placeholder="0" class="w-full border border-gray-300 rounded-lg p-2 text-sm font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">ব্যাংকের নাম / চেক বা স্লিপ নং</label>
+                    <input type="text" id="bank-note" placeholder="যেমন: ইসলামী ব্যাংক জমা স্লিপ নং ৪৫" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                </div>
+                <button onclick="saveBankTransfer()" class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-2.5 rounded-lg text-sm">
+                    ক্যাশ-ব্যাংক ট্রান্সফার সেভ করুন
+                </button>
+            </div>
+
+            <!-- Manage Categories -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-2">
+                <h3 class="text-xs font-bold text-gray-600">নতুন আয় বা ব্যয়ের খাত যোগ করুন</h3>
+                <div class="flex gap-2">
+                    <select id="new-cat-type" class="border border-gray-300 rounded-lg p-2 text-xs bg-gray-50">
+                        <option value="income">আয়ের খাত</option>
+                        <option value="expense">ব্যয়ের খাত</option>
+                    </select>
+                    <input type="text" id="new-cat-name" placeholder="খাতের নাম লিখুন..." class="flex-1 border border-gray-300 rounded-lg p-2 text-xs">
+                    <button onclick="addCategory()" class="bg-gray-800 text-white px-3 py-2 rounded-lg text-xs font-bold">যুক্ত</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: LEDGER & YEARLY REPORT ==================== -->
+        <section id="tab-ledger" class="hidden space-y-4">
+            <div class="grid grid-cols-2 bg-gray-200 p-1 rounded-xl text-xs font-bold">
+                <button onclick="switchLedgerSub('category')" id="lsub-btn-category" class="py-2 rounded-lg bg-white text-emerald-800 shadow-sm">খাতভিত্তিক লেজার</button>
+                <button onclick="switchLedgerSub('yearly')" id="lsub-btn-yearly" class="py-2 rounded-lg text-gray-600">বাৎসরিক হিসাব (১২ মাস)</button>
+            </div>
+
+            <!-- 4A: Category Ledger -->
+            <div id="lsub-category" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <h2 class="text-sm font-bold text-gray-700 border-b pb-2">খাতভিত্তিক লেজার ও বাৎসরিক ফলাফল</h2>
+                <div class="grid grid-cols-3 gap-2">
+                    <select id="ledger-cat-select" onchange="renderCategoryLedger()" class="col-span-2 border border-gray-300 rounded-lg p-2 text-xs font-semibold bg-gray-50"></select>
+                    <select id="ledger-year-select" onchange="renderCategoryLedger()" class="border border-gray-300 rounded-lg p-2 text-xs font-semibold bg-gray-50"></select>
+                </div>
+                <div id="ledger-summary-box" class="bg-slate-800 text-white p-3 rounded-xl flex justify-between items-center text-xs">
+                    <span>নির্বাচিত খাতে পুরো বছরের মোট:</span>
+                    <strong id="ledger-total-val" class="text-base text-emerald-400">৳ ০</strong>
+                </div>
+                <div id="ledger-entries-list" class="space-y-2 max-h-96 overflow-y-auto"></div>
+            </div>
+
+            <!-- 4B: Yearly Statement -->
+            <div id="lsub-yearly" class="hidden bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h2 class="text-sm font-bold text-gray-700">বাৎসরিক আয়-ব্যয় বিবরণী</h2>
+                    <select id="yearly-report-year" onchange="renderYearlyStatement()" class="border border-gray-300 rounded-lg px-2 py-1 text-xs font-bold bg-gray-50"></select>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border-collapse">
+                        <thead>
+                            <tr class="bg-emerald-800 text-white">
+                                <th class="p-2 border">মাস</th>
+                                <th class="p-2 border text-right">মোট আয়</th>
+                                <th class="p-2 border text-right">মোট ব্যয়</th>
+                                <th class="p-2 border text-right">উদ্বৃত্ত</th>
+                            </tr>
+                        </thead>
+                        <tbody id="yearly-table-body"></tbody>
+                        <tfoot id="yearly-table-foot" class="bg-gray-100 font-bold"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 5: BACKUP & EXPORT ==================== -->
+        <section id="tab-backup" class="hidden space-y-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <h2 class="text-sm font-bold text-gray-700 border-b pb-2">এক্সেল ও জিমেইল ব্যাকআপ</h2>
+                <p class="text-xs text-gray-600 leading-relaxed">
+                    আপনার সব হিসাব ফোনের অফলাইন মেমোরিতে সুরক্ষিত আছে। নিরাপত্তার জন্য প্রতি সপ্তাহে বা মাসে নিচের বাটন থেকে ফাইল ডাউনলোড করে আপনার <strong>Gmail বা Google Drive</strong>-এ সেভ করে রাখুন।
+                </p>
+                
+                <button onclick="exportToExcelCSV()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm">
+                    📊 এক্সেল ফাইল ডাউনলোড করুন (.CSV)
+                </button>
+
+                <button onclick="exportFullJSON()" class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm">
+                    💾 পূর্ণাঙ্গ ব্যাকআপ ডাউনলোড (.JSON)
+                </button>
+
+                <div class="pt-3 border-t">
+                    <label class="block text-xs font-bold text-gray-700 mb-1">আগের ব্যাকআপ ফাইল রিস্টোর করুন (.JSON)</label>
+                    <input type="file" id="import-json-file" accept=".json" onchange="importFullJSON(event)" class="w-full text-xs text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-gray-200 file:text-gray-800">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-30 no-print shadow-lg">
+        <button onclick="switchMainTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center text-emerald-700 font-bold text-[11px]">
+            <span class="text-lg">🏠</span>
+            <span>হোম হিসাব</span>
+        </button>
+        <button onclick="switchMainTab('receipts')" id="nav-receipts" class="flex flex-col items-center text-gray-500 font-medium text-[11px]">
+            <span class="text-lg">🧾</span>
+            <span>রশিদ বই</span>
+        </button>
+        <button onclick="switchMainTab('transactions')" id="nav-transactions" class="flex flex-col items-center text-gray-500 font-medium text-[11px]">
+            <span class="text-lg">💸</span>
+            <span>আয়/ব্যয়</span>
+        </button>
+        <button onclick="switchMainTab('ledger')" id="nav-ledger" class="flex flex-col items-center text-gray-500 font-medium text-[11px]">
+            <span class="text-lg">📒</span>
+            <span>লেজার</span>
+        </button>
+        <button onclick="switchMainTab('backup')" id="nav-backup" class="flex flex-col items-center text-gray-500 font-medium text-[11px]">
+            <span class="text-lg">☁️</span>
+            <span>ব্যাকআপ</span>
+        </button>
+    </nav>
+
+    <!-- ==================== EDIT MODAL (For Editing Any Entry) ==================== -->
+    <div id="edit-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-md w-full p-4 space-y-3 shadow-xl">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="text-sm font-bold text-gray-800" id="edit-modal-title">এন্ট্রি সংশোধন (Edit)</h3>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-700 font-bold text-lg">✕</button>
+            </div>
+            <div id="edit-modal-body" class="space-y-3"></div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="deleteCurrentEditEntry()" class="bg-rose-100 text-rose-700 font-bold px-3 py-2 rounded-lg text-xs">ডিলিট</button>
+                <button onclick="saveEditedEntry()" class="flex-1 bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs">পরিবর্তন সেভ করুন</button>
+            </div>
+        </div>
     </div>
-    <div class="muted" style="margin-top:10px">মাসের নেট (আয় − ব্যয়)</div>
-    <div class="big" id="mNet">০</div>
-  </div>
 
-  <div class="card">
-    <h2>বর্তমান ব্যালেন্স (সব সময়)</h2>
-    <table><tbody id="balRows"></tbody></table>
-    <div class="row" style="margin-top:8px"><div class="muted" style="flex:1">মোট নগদ + ব্যাংক</div><div class="big" id="totalCash">০</div></div>
-    <div class="muted">অগ্রিম বাকি আছে: <b id="advOpen">০</b></div>
-  </div>
+    <!-- ==================== MOSQUE SETTINGS MODAL ==================== -->
+    <div id="mosque-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-md w-full p-4 space-y-3 shadow-xl">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="text-sm font-bold text-gray-800">মসজিদের তথ্য ও প্রারম্ভিক জের</h3>
+                <button onclick="closeMosqueModal()" class="text-gray-400 font-bold text-lg">✕</button>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">মসজিদের নাম (PDF রিপোর্টে দেখাবে)</label>
+                <input type="text" id="set-mosque-name" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">ঠিকানা</label>
+                <input type="text" id="set-mosque-address" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">শুরুর ক্যাশ জের (Opening Cash)</label>
+                    <input type="number" id="set-open-cash" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">শুরুর ব্যাংক জের (Opening Bank)</label>
+                    <input type="number" id="set-open-bank" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                </div>
+            </div>
+            <button onclick="saveMosqueSettings()" class="w-full bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm">তথ্য সংরক্ষণ করুন</button>
+        </div>
+    </div>
 
-  <div class="card">
-    <h2>আয়ের খাতওয়ারি</h2>
-    <table><tbody id="mIncomeRows"></tbody></table>
-  </div>
-  <div class="card">
-    <h2>ব্যয়ের খাতওয়ারি</h2>
-    <table><tbody id="mExpenseRows"></tbody></table>
-  </div>
-</section>
+    <!-- ==================== PRINTABLE A4 MONTHLY REPORT ==================== -->
+    <div id="print-area" class="hidden p-6 bg-white text-black"></div>
 
-<!-- ============ বার্ষিক ============ -->
-<section id="tab-year" class="hidden">
-  <div class="card">
-    <h2>বছরের তালিকা</h2>
-    <div class="row"><select id="yearSel"></select></div>
-    <table>
-      <thead><tr><th>মাস</th><th class="num">আয়</th><th class="num">ব্যয়</th><th class="num">নেট</th></tr></thead>
-      <tbody id="yearRows"></tbody>
-      <tfoot><tr><th>মোট</th><th class="num" id="yIn"></th><th class="num" id="yOut"></th><th class="num" id="yBal"></th></tr></tfoot>
-    </table>
-  </div>
-</section>
+    <script>
+        // ==================== DATA STORE & INITIALIZATION ====================
+        const STORAGE_KEY = 'mosque_accounting_v2';
+        const bnMonths = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
 
-<!-- ============ আয়/রসিদ ============ -->
-<section id="tab-income" class="hidden">
-  <div class="card">
-    <h2>রসিদ বই</h2>
-    <p class="muted">প্রতিটি বইয়ের নাম, শুরু ও শেষ পৃষ্ঠা দিন। রসিদ নম্বর আগেরটির পরে নিজে বসবে।</p>
-    <div class="row"><input id="bkName" placeholder="বইয়ের নাম (যেমন: দান রসিদ-১)"><input id="bkStart" type="number" placeholder="শুরু পৃষ্ঠা"><input id="bkEnd" type="number" placeholder="শেষ পৃষ্ঠা"><button onclick="addBook()">যোগ</button></div>
-    <table><tbody id="bkList"></tbody></table>
-  </div>
+        let db = {
+            settings: {
+                mosqueName: 'বায়তুল আমান জামে মসজিদ',
+                address: 'হাটহাজারী, চট্টগ্রাম',
+                openingCash: 0,
+                openingBank: 0
+            },
+            categories: [
+                { id: 'inc_1', name: 'মাসিক চাঁদা', type: 'income' },
+                { id: 'inc_2', name: 'দান বক্স', type: 'income' },
+                { id: 'inc_3', name: 'ফলমূল ও গাছপালা বিক্রি', type: 'income' },
+                { id: 'inc_4', name: 'পুরাতন মালামাল বিক্রি', type: 'income' },
+                { id: 'inc_5', name: 'জুমার বিশেষ দান', type: 'income' },
+                { id: 'exp_1', name: 'ইমাম ও খতিব সাহেবের বেতন', type: 'expense' },
+                { id: 'exp_2', name: 'মুয়াজ্জিন ও খাদেমের বেতন', type: 'expense' },
+                { id: 'exp_3', name: 'মাহফিল ও বক্তার সম্মানী', type: 'expense' },
+                { id: 'exp_4', name: 'বিদ্যুৎ ও পানির বিল', type: 'expense' },
+                { id: 'exp_5', name: 'মসজিদ মেরামত ও আনুষঙ্গিক ব্যয়', type: 'expense' }
+            ],
+            books: [], // { id, bookNo, categoryId, startPage, endPage }
+            receiptEntries: [], // { id, bookId, pageNo, date, amount, voided }
+            transactions: [] // { id, type: 'income'|'expense'|'bank_transfer', date, categoryId, amount, mode: 'cash'|'bank', transferDir: 'cash_to_bank'|'bank_to_cash', voucherNo, note }
+        };
 
-  <div class="card">
-    <h2>আয়ের রসিদ</h2>
-    <div class="row"><select id="inBook" onchange="refreshNextReceipt()"></select><select id="inCat"></select></div>
-    <div class="row"><input id="inDate" type="date"><select id="inAcc"></select></div>
-    <div class="row"><input id="inAmt" type="number" placeholder="টাকা"><input id="inNote" placeholder="নোট (ঐচ্ছিক)"></div>
-    <div class="row"><div id="inNext" class="muted" style="flex:1">—</div><button onclick="saveIncome()">রসিদ যোগ</button></div>
-    <table><thead><tr><th>রসিদ নং</th><th>তারিখ</th><th>খাত</th><th class="num">টাকা</th><th></th></tr></thead><tbody id="inRows"></tbody></table>
-  </div>
-</section>
+        let currentEditTarget = null; // { kind: 'receipt'|'tx', id }
 
-<!-- ============ ব্যয়/বাউচার ============ -->
-<section id="tab-expense" class="hidden">
-  <div class="card">
-    <h2>ব্যয়ের বাউচার</h2>
-    <div class="row"><select id="exCat"></select><input id="exDate" type="date"></div>
-    <div class="row"><select id="exAcc"></select><input id="exAmt" type="number" placeholder="টাকা"></div>
-    <div class="row"><input id="exNote" placeholder="বিবরণ (যেমন: বিদ্যুৎ বিল, জুলাই)"></div>
-    <div class="row"><div id="exNext" class="muted" style="flex:1">—</div><button onclick="saveExpense()">বাউচার যোগ</button></div>
-    <table><thead><tr><th>বাউচার</th><th>তারিখ</th><th>খাত/বিবরণ</th><th class="num">টাকা</th><th></th></tr></thead><tbody id="exRows"></tbody></table>
-  </div>
-</section>
+        function loadDB() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                db = JSON.parse(saved);
+            }
+        }
 
-<!-- ============ অগ্রিম ============ -->
-<section id="tab-adv" class="hidden">
-  <div class="card">
-    <h2>নতুন অগ্রিম</h2>
-    <p class="muted">অগ্রিম দেওয়ার সময় সেটি ব্যয় হিসেবে ধরা হবে। পরে ফুল পেমেন্ট হলে "সমন্বয়" চাপুন ও মোট টাকা দিন, ব্যয় সেই অনুযায়ী বদলে যাবে।</p>
-    <div class="row"><input id="avPerson" placeholder="কাকে (যেমন: মুয়াজ্জিন সাহেব)"><input id="avDate" type="date"></div>
-    <div class="row"><select id="avCat"></select><select id="avAcc"></select></div>
-    <div class="row"><input id="avAmt" type="number" placeholder="অগ্রিমের টাকা"><input id="avNote" placeholder="নোট (ঐচ্ছিক)"><button onclick="saveAdvance()">অগ্রিম দিন</button></div>
-  </div>
-  <div class="card">
-    <h2>অগ্রিমের তালিকা</h2>
-    <table><thead><tr><th>কাকে/কবে</th><th>খাত/অ্যাকাউন্ট</th><th class="num">টাকা</th><th>অবস্থা</th><th></th></tr></thead><tbody id="avRows"></tbody></table>
-  </div>
-</section>
+        function saveDB() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+        }
 
-<!-- ============ সেটিংস ============ -->
-<section id="tab-set" class="hidden">
-  <div class="card">
-    <h2>মসজিদের নাম</h2>
-    <div class="row"><input id="setName"><button onclick="saveName()">সংরক্ষণ</button></div>
-  </div>
+        function formatBDT(num) {
+            return '৳ ' + Number(num || 0).toLocaleString('bn-BD');
+        }
 
-  <div class="card">
-    <h2>অ্যাকাউন্ট (নগদ/ব্যাংক)</h2>
-    <p class="muted">নাম ও শুরুর ব্যালেন্স বদলাতে পারবেন।</p>
-    <div id="accEdit"></div>
-    <div class="row" style="margin-top:8px"><input id="newAccName" placeholder="নতুন অ্যাকাউন্টের নাম"><button class="ghost" onclick="addAccount()">যোগ</button></div>
-  </div>
+        function todayISO() {
+            return new Date().toISOString().split('T')[0];
+        }
 
-  <div class="card">
-    <h2>স্থানান্তর (ক্যাশ ↔ ব্যাংক)</h2>
-    <div class="row"><select id="trFrom"></select><select id="trTo"></select></div>
-    <div class="row"><input id="trAmt" type="number" placeholder="টাকা"><input id="trDate" type="date"><button onclick="saveTransfer()">স্থানান্তর</button></div>
-    <table><tbody id="trRows"></tbody></table>
-  </div>
+        // ==================== INITIAL SETUP ON LOAD ====================
+        window.onload = function() {
+            loadDB();
+            document.getElementById('header-mosque-name').innerText = db.settings.mosqueName;
 
-  <div class="card">
-    <h2>খাতের তালিকা</h2>
-    <div class="muted">ব্যয়ের খাত</div>
-    <div class="row"><input id="ecNew" placeholder="নতুন ব্যয়ের খাত"><button class="ghost" onclick="addCat('expenseCats','ecNew')">যোগ</button></div>
-    <div id="ecList" style="margin-bottom:10px"></div>
-    <div class="muted">আয়ের খাত</div>
-    <div class="row"><input id="icNew" placeholder="নতুন আয়ের খাত"><button class="ghost" onclick="addCat('incomeCats','icNew')">যোগ</button></div>
-    <div id="icList"></div>
-  </div>
+            const now = new Date();
+            const curMonth = now.getMonth();
+            const curYear = now.getFullYear();
 
-  <div class="card">
-    <h2>ব্যাকআপ</h2>
-    <p class="muted">নিচের লেখা কপি করে রাখুন। ফোন বদলালে এটি পেস্ট করে "ইমপোর্ট" চাপলে ডেটা ফিরে আসবে।</p>
-    <button class="ghost" onclick="exportData()">ব্যাকআপ দেখান</button>
-    <textarea id="bkText" style="margin-top:8px"></textarea>
-    <div class="row" style="margin-top:6px"><button class="danger" onclick="importData()">ইমপোর্ট (ডেটা বদলে যাবে)</button></div>
-  </div>
-</section>
+            // Populate Year Selectors
+            ['dash-year', 'ledger-year-select', 'yearly-report-year'].forEach(id => {
+                const el = document.getElementById(id);
+                el.innerHTML = '';
+                for (let y = curYear - 2; y <= curYear + 2; y++) {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.innerText = y;
+                    if (y === curYear) opt.selected = true;
+                    el.appendChild(opt);
+                }
+            });
 
-</main>
+            document.getElementById('dash-month').value = curMonth;
+            ['entry-date', 'inc-date', 'exp-date', 'bank-date'].forEach(id => {
+                document.getElementById(id).value = todayISO();
+            });
 
-<nav>
-  <button data-tab="month" class="active">মাসিক</button>
-  <button data-tab="year">বার্ষিক</button>
-  <button data-tab="income">আয়/রসিদ</button>
-  <button data-tab="expense">ব্যয়/বাউচার</button>
-  <button data-tab="adv">অগ্রিম</button>
-  <button data-tab="set">সেটিংস</button>
-</nav>
+            refreshAllDropdowns();
+            renderDashboard();
+            renderRegisteredBooks();
+        };
 
-<script>
-/* ================= ডেটা ================= */
-const KEY = "baitunNajatHisabV2";
-const CATS_EXP = ["ইমাম/খতিব বেতন","মুয়াজ্জিন বেতন","পরিচ্ছন্নতাকর্মী বেতন","বিদ্যুৎ বিল","পানির বিল","মেরামত","ইফতার","অন্যান্য"];
-const CATS_INC = ["জুমার দানবক্স","ব্যক্তিগত অনুদান","দোকান/বিক্রি","ফলাদি বিক্রি","অন্যান্য আয়"];
+        function refreshAllDropdowns() {
+            const incCats = db.categories.filter(c => c.type === 'income');
+            const expCats = db.categories.filter(c => c.type === 'expense');
 
-function freshDB() {
-  return {
-    mosqueName: "বাইতুন নাজাত জামে মসজিদ",
-    accounts: [
-      { id: "cash", name: "ক্যাশ", open: 0 },
-      { id: "bank1", name: "আলারাফা ব্যাংক", open: 0 },
-      { id: "bank2", name: "ব্যাংক ২", open: 0 }
-    ],
-    books: [], incomes: [], expenses: [], advances: [], transfers: [],
-    expenseCats: [...CATS_EXP], incomeCats: [...CATS_INC], voucherStart: 1
-  };
-}
-let db = JSON.parse(localStorage.getItem(KEY) || "null") || freshDB();
-const base = freshDB();
-Object.keys(base).forEach(k => { if (db[k] === undefined) db[k] = base[k]; });
-const save = () => localStorage.setItem(KEY, JSON.stringify(db));
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+            const fillSelect = (id, list) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = list.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            };
 
-/* ================= সহায়ক ================= */
-const $ = id => document.getElementById(id);
-const todayISO = () => new Date().toISOString().slice(0, 10);
-const bn = s => String(s).replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
-const fmt = n => bn(Number(n || 0).toLocaleString("en-US"));
-const monthKey = d => d.slice(0, 7);
-const monthName = k => { const [y, m] = k.split("-"); return bn(m) + "/" + bn(y); };
-const acc = id => db.accounts.find(a => a.id === id);
-const accName = id => (acc(id) ? acc(id).name : "—");
-const expOf = id => db.expenses.find(e => e.id === id);
-const sumList = (list) => list.reduce((s, x) => s + Number(x.amt || 0), 0);
+            fillSelect('new-book-category', incCats);
+            fillSelect('inc-category', incCats);
+            fillSelect('exp-category', expCats);
+            fillSelect('ledger-cat-select', db.categories);
 
-function balance(id) {
-  const a = acc(id); if (!a) return 0;
-  let b = Number(a.open) || 0;
-  db.incomes.forEach(i => { if (i.acc === id) b += Number(i.amt); });
-  db.expenses.forEach(e => { if (e.acc === id) b -= Number(e.amt); });
-  db.transfers.forEach(t => { if (t.from === id) b -= Number(t.amt); if (t.to === id) b += Number(t.amt); });
-  return b;
-}
-function fillSelect(id, items, sel) {
-  $(id).innerHTML = items.map(x => `<option value="${x.v}">${x.t}</option>`).join("");
-  if (sel) $(id).value = sel;
-}
-const accItems = () => db.accounts.map(a => ({ v: a.id, t: a.name }));
-const catItems = list => list.map(c => ({ v: c, t: c }));
+            // Books dropdowns
+            const bookOpts = db.books.length
+                ? db.books.map(b => {
+                    const cat = db.categories.find(c => c.id === b.categoryId);
+                    return `<option value="${b.id}">${b.bookNo} (${cat ? cat.name : ''}) [${b.startPage}-${b.endPage}]</option>`;
+                }).join('')
+                : `<option value="">কোনো বই যুক্ত করা হয়নি</option>`;
 
-/* ================= রসিদ/বাউচার নম্বর ================= */
-function nextReceiptInfo(bookId) {
-  const book = db.books.find(b => b.id === bookId);
-  if (!book) return { ok: false, msg: "আগে একটি রসিদ বই যোগ করুন" };
-  const used = db.incomes.filter(i => i.bookId === bookId).map(i => Number(i.receiptNo));
-  const next = used.length ? Math.max(...used) + 1 : Number(book.start);
-  if (next > Number(book.end)) return { ok: false, msg: `"${book.name}" বই শেষ (${bn(book.end)} পর্যন্ত)। নতুন বই যোগ করুন` };
-  return { ok: true, no: next, book };
-}
-function nextVoucherNo() {
-  return db.expenses.length ? Math.max(...db.expenses.map(e => Number(e.voucherNo))) + 1 : db.voucherStart;
-}
+            document.getElementById('entry-book-select').innerHTML = bookOpts;
+            document.getElementById('audit-book-select').innerHTML = bookOpts;
 
-/* ================= কভার ================= */
-function startApp() { $("cover").classList.add("hidden"); }
+            if (db.books.length) {
+                loadBookPagesForEntry();
+                renderBookAudit();
+            }
+        }
 
-/* ================= মাসিক ================= */
-function allMonths() {
-  const s = new Set([...db.incomes.map(i => monthKey(i.date)), ...db.expenses.map(e => monthKey(e.date)), todayISO().slice(0, 7)]);
-  return [...s].sort().reverse();
-}
-function renderMonth() {
-  const cur = $("monthSel").value;
-  $("monthSel").innerHTML = allMonths().map(m => `<option value="${m}">${monthName(m)}</option>`).join("");
-  if (cur && allMonths().includes(cur)) $("monthSel").value = cur;
-  const m = $("monthSel").value;
-  const inc = db.incomes.filter(i => monthKey(i.date) === m);
-  const exp = db.expenses.filter(e => monthKey(e.date) === m);
-  const tIn = sumList(inc), tEx = sumList(exp);
-  $("mIncome").textContent = fmt(tIn);
-  $("mExpense").textContent = fmt(tEx);
-  $("mNet").textContent = fmt(tIn - tEx);
+        // ==================== NAVIGATION ====================
+        function switchMainTab(tab) {
+            ['dashboard', 'receipts', 'transactions', 'ledger', 'backup'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                const nav = document.getElementById('nav-' + t);
+                nav.classList.remove('text-emerald-700', 'font-bold');
+                nav.classList.add('text-gray-500', 'font-medium');
+            });
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            const activeNav = document.getElementById('nav-' + tab);
+            activeNav.classList.add('text-emerald-700', 'font-bold');
+            activeNav.classList.remove('text-gray-500', 'font-medium');
 
-  $("balRows").innerHTML = db.accounts.map(a => `<tr><td>${a.name}</td><td class="num">${fmt(balance(a.id))}</td></tr>`).join("");
-  $("totalCash").textContent = fmt(db.accounts.reduce((s, a) => s + balance(a.id), 0));
-  $("advOpen").textContent = fmt(sumList(db.advances.filter(a => a.status === "open").map(a => ({ amt: expOf(a.expId) ? expOf(a.expId).amt : 0 }))));
+            if (tab === 'dashboard') renderDashboard();
+            if (tab === 'receipts') { refreshAllDropdowns(); renderRegisteredBooks(); }
+            if (tab === 'ledger') { renderCategoryLedger(); renderYearlyStatement(); }
+        }
 
-  const rowsOf = list => {
-    const o = {};
-    list.forEach(x => { o[x.cat] = (o[x.cat] || 0) + Number(x.amt); });
-    return Object.entries(o).map(([k, v]) => `<tr><td>${k}</td><td class="num">${fmt(v)}</td></tr>`).join("") || `<tr><td class="muted">এন্ট্রি নেই</td></tr>`;
-  };
-  $("mIncomeRows").innerHTML = rowsOf(inc);
-  $("mExpenseRows").innerHTML = rowsOf(exp);
-}
-function renderYear() {
-  const years = [...new Set(allMonths().map(m => m.slice(0, 4)))].sort().reverse();
-  const cur = $("yearSel").value;
-  $("yearSel").innerHTML = years.map(y => `<option>${y}</option>`).join("");
-  if (cur) $("yearSel").value = cur;
-  const y = $("yearSel").value;
-  let tI = 0, tE = 0, html = "";
-  for (let i = 1; i <= 12; i++) {
-    const k = y + "-" + String(i).padStart(2, "0");
-    const a = sumList(db.incomes.filter(x => monthKey(x.date) === k));
-    const b = sumList(db.expenses.filter(x => monthKey(x.date) === k));
-    tI += a; tE += b;
-    html += `<tr><td>${bn(i)}</td><td class="num in">${fmt(a)}</td><td class="num out">${fmt(b)}</td><td class="num">${fmt(a - b)}</td></tr>`;
-  }
-  $("yearRows").innerHTML = html;
-  $("yIn").textContent = fmt(tI); $("yOut").textContent = fmt(tE); $("yBal").textContent = fmt(tI - tE);
-}
+        function switchReceiptSub(sub) {
+            ['entry', 'books', 'audit'].forEach(s => {
+                document.getElementById('rsub-' + s).classList.add('hidden');
+                document.getElementById('rsub-btn-' + s).className = 'py-2 rounded-lg text-gray-600';
+            });
+            document.getElementById('rsub-' + sub).classList.remove('hidden');
+            document.getElementById('rsub-btn-' + sub).className = 'py-2 rounded-lg bg-white text-emerald-800 shadow-sm';
+            if (sub === 'audit') renderBookAudit();
+        }
 
-/* ================= রসিদ বই/আয় ================= */
-function addBook() {
-  const name = $("bkName").value.trim(), s = +$("bkStart").value, e = +$("bkEnd").value;
-  if (!name || !s || !e || e < s) return alert("বইয়ের নাম ও সঠিক শুরু/শেষ পৃষ্ঠা দিন");
-  db.books.push({ id: uid(), name, start: s, end: e }); save();
-  $("bkName").value = $("bkStart").value = $("bkEnd").value = ""; renderAll();
-}
-function delBook(id) {
-  if (!confirm("এই বইয়ের সব রসিদও মুছে যাবে। নিশ্চিত?")) return;
-  db.books = db.books.filter(b => b.id !== id);
-  db.incomes = db.incomes.filter(i => i.bookId !== id); save(); renderAll();
-}
-function refreshNextReceipt() {
-  const r = nextReceiptInfo($("inBook").value);
-  $("inNext").textContent = r.ok ? `পরবর্তী রসিদ নং: ${bn(r.no)} (${r.book.name})` : r.msg;
-}
-function renderIncome() {
-  $("bkList").innerHTML = db.books.map(b => {
-    const list = db.incomes.filter(i => i.bookId === b.id);
-    const last = list.length ? Math.max(...list.map(i => Number(i.receiptNo))) : null;
-    return `<tr><td>${b.name}</td><td class="muted">${bn(b.start)}–${bn(b.end)}</td>
-      <td class="muted">ব্যবহৃত ${bn(list.length)} | শেষ ${last ? bn(last) : "—"} | মোট ${fmt(sumList(list))}</td>
-      <td><button class="small danger" onclick="delBook('${b.id}')">মুছুন</button></td></tr>`;
-  }).join("") || `<tr><td class="muted">কোনো রসিদ বই নেই</td></tr>`;
-  fillSelect("inBook", db.books.map(b => ({ v: b.id, t: b.name })), $("inBook").value);
-  fillSelect("inCat", catItems(db.incomeCats), $("inCat").value);
-  fillSelect("inAcc", accItems(), $("inAcc").value);
-  refreshNextReceipt();
-  $("inRows").innerHTML = [...db.incomes].sort((a, b) => b.date.localeCompare(a.date)).map(i => {
-    const bk = db.books.find(b => b.id === i.bookId);
-    return `<tr><td>${bk ? bk.name + " - " : ""}${bn(i.receiptNo)}</td><td>${i.date}</td><td>${i.cat}<div class="muted">${accName(i.acc)}${i.note ? " · " + i.note : ""}</div></td>
-      <td class="num in">${fmt(i.amt)}</td><td><button class="small danger" onclick="delIncome('${i.id}')">×</button></td></tr>`;
-  }).join("") || `<tr><td class="muted">কোনো আয় নেই</td></tr>`;
-}
-function saveIncome() {
-  const amt = +$("inAmt").value;
-  if (!amt) return alert("টাকার পরিমাণ দিন");
-  const r = nextReceiptInfo($("inBook").value);
-  if (!r.ok) return alert(r.msg);
-  db.incomes.push({ id: uid(), bookId: r.book.id, receiptNo: r.no, date: $("inDate").value || todayISO(), cat: $("inCat").value, amt, acc: $("inAcc").value, note: $("inNote").value.trim() });
-  save(); $("inAmt").value = ""; $("inNote").value = ""; renderAll();
-}
-function delIncome(id) {
-  if (!confirm("এই রসিদ মুছবেন?")) return;
-  db.incomes = db.incomes.filter(i => i.id !== id); save(); renderAll();
-}
+        function switchTxSub(sub) {
+            ['income', 'expense', 'bank'].forEach(s => {
+                document.getElementById('tsub-' + s).classList.add('hidden');
+                document.getElementById('tsub-btn-' + s).className = 'py-2 rounded-lg text-gray-600';
+            });
+            document.getElementById('tsub-' + sub).classList.remove('hidden');
+            document.getElementById('tsub-btn-' + sub).className = 'py-2 rounded-lg bg-white text-emerald-800 shadow-sm';
+        }
 
-/* ================= ব্যয়/বাউচার ================= */
-function renderExpense() {
-  fillSelect("exCat", catItems(db.expenseCats), $("exCat").value);
-  fillSelect("exAcc", accItems(), $("exAcc").value);
-  $("exNext").textContent = `পরবর্তী বাউচার নং: ${bn(nextVoucherNo())}`;
-  $("exRows").innerHTML = [...db.expenses].sort((a, b) => b.date.localeCompare(a.date)).map(e => `
-    <tr><td>${bn(e.voucherNo)}</td><td>${e.date}</td>
-    <td>${e.cat} ${e.advId ? '<span class="tag adv">অগ্রিম</span>' : ""}<div class="muted">${accName(e.acc)}${e.note ? " · " + e.note : ""}</div></td>
-    <td class="num out">${fmt(e.amt)}</td>
-    <td><button class="small danger" onclick="delExpense('${e.id}')">×</button></td></tr>`).join("")
-    || `<tr><td class="muted">কোনো ব্যয় নেই</td></tr>`;
-}
-function saveExpense() {
-  const amt = +$("exAmt").value;
-  if (!amt) return alert("টাকার পরিমাণ দিন");
-  db.expenses.push({ id: uid(), voucherNo: nextVoucherNo(), date: $("exDate").value || todayISO(), cat: $("exCat").value, amt, acc: $("exAcc").value, note: $("exNote").value.trim() });
-  save(); $("exAmt").value = ""; $("exNote").value = ""; renderAll();
-}
-function delExpense(id) {
-  const e = expOf(id);
-  if (e && e.advId) {
-    if (!confirm("এটি একটি অগ্রিমের ব্যয়। মুছলে অগ্রিমটিও মুছে যাবে। নিশ্চিত?")) return;
-    db.advances = db.advances.filter(a => a.id !== e.advId);
-  } else if (!confirm("এই বাউচার মুছবেন?")) return;
-  db.expenses = db.expenses.filter(x => x.id !== id); save(); renderAll();
-}
+        function switchLedgerSub(sub) {
+            ['category', 'yearly'].forEach(s => {
+                document.getElementById('lsub-' + s).classList.add('hidden');
+                document.getElementById('lsub-btn-' + s).className = 'py-2 rounded-lg text-gray-600';
+            });
+            document.getElementById('lsub-' + sub).classList.remove('hidden');
+            document.getElementById('lsub-btn-' + sub).className = 'py-2 rounded-lg bg-white text-emerald-800 shadow-sm';
+            if (sub === 'yearly') renderYearlyStatement();
+        }
 
-/* ================= অগ্রিম ================= */
-function saveAdvance() {
-  const person = $("avPerson").value.trim(), amt = +$("avAmt").value;
-  if (!person || !amt) return alert("কাকে ও কত টাকা দিচ্ছেন দিন");
-  const expId = uid();
-  const date = $("avDate").value || todayISO();
-  const advId = uid();
-  db.expenses.push({ id: expId, voucherNo: nextVoucherNo(), date, cat: $("avCat").value, amt, acc: $("avAcc").value, note: "অগ্রিম: " + person + ($("avNote").value ? " · " + $("avNote").value : ""), advId });
-  db.advances.push({ id: advId, person, date, expId, status: "open", settleDate: "" });
-  save();
-  $("avPerson").value = ""; $("avAmt").value = ""; $("avNote").value = ""; renderAll();
-}
-function editAdvance(id) {
-  const a = db.advances.find(x => x.id === id), e = expOf(a.expId);
-  const v = prompt("অগ্রিমের নতুন টাকার পরিমাণ:", e.amt);
-  if (v === null || !+v) return;
-  e.amt = +v; save(); renderAll();
-}
-function settleAdvance(id) {
-  const a = db.advances.find(x => x.id === id), e = expOf(a.expId);
-  const v = prompt(`${a.person}-এর ফুল পেমেন্টের মোট টাকা লিখুন (আগে অগ্রিম ছিল ${fmt(e.amt)}):`, e.amt);
-  if (v === null || !+v) return;
-  e.amt = +v;
-  a.status = "settled"; a.settleDate = todayISO();
-  save(); renderAll();
-}
-function reopenAdvance(id) {
-  const a = db.advances.find(x => x.id === id);
-  a.status = "open"; a.settleDate = ""; save(); renderAll();
-}
-function renderAdvance() {
-  fillSelect("avCat", catItems(db.expenseCats), $("avCat").value);
-  fillSelect("avAcc", accItems(), $("avAcc").value);
-  if (!$("avDate").value) $("avDate").value = todayISO();
-  $("avRows").innerHTML = [...db.advances].sort((a, b) => b.date.localeCompare(a.date)).map(a => {
-    const e = expOf(a.expId) || { amt: 0, acc: "", cat: "" };
-    const st = a.status === "open" ? '<span class="tag adv">বাকি</span>' : `<span class="tag settled">সমন্বয় ${a.settleDate ? bn(a.settleDate) : ""}</span>`;
-    const btn = a.status === "open"
-      ? `<button class="small" onclick="settleAdvance('${a.id}')">সমন্বয়</button> <button class="small ghost" onclick="editAdvance('${a.id}')">পরিবর্তন</button>`
-      : `<button class="small ghost" onclick="editAdvance('${a.id}')">পরিবর্তন</button> <button class="small ghost" onclick="reopenAdvance('${a.id}')">খুলুন</button>`;
-    return `<tr><td>${a.person}<div class="muted">${a.date}</div></td><td>${e.cat}<div class="muted">${accName(e.acc)}</div></td>
-      <td class="num">${fmt(e.amt)}</td><td>${st}</td><td>${btn}</td></tr>`;
-  }).join("") || `<tr><td class="muted">কোনো অগ্রিম নেই</td></tr>`;
-}
+        // ==================== RECEIPT BOOKS & BATCH ENTRY ====================
+        function addNewReceiptBook() {
+            const bookNo = document.getElementById('new-book-no').value.trim();
+            const categoryId = document.getElementById('new-book-category').value;
+            const startPage = parseInt(document.getElementById('new-book-start').value);
+            const endPage = parseInt(document.getElementById('new-book-end').value);
 
-/* ================= সেটিংস ================= */
-function renderSettings() {
-  $("hdrName").textContent = db.mosqueName;
-  $("coverName").textContent = db.mosqueName;
-  $("setName").value = db.mosqueName;
-  $("accEdit").innerHTML = db.accounts.map(a => `
-    <div class="setting-acc">
-      <input id="an_${a.id}" value="${a.name}">
-      <input id="ao_${a.id}" type="number" value="${a.open}" placeholder="শুরুর ব্যালেন্স">
-      <button class="small ghost" onclick="saveAcc('${a.id}')">ঠিক</button>
-    </div>`).join("");
-  fillSelect("trFrom", accItems(), $("trFrom").value);
-  fillSelect("trTo", accItems(), $("trTo").value);
-  if (!$("trDate").value) $("trDate").value = todayISO();
-  $("trRows").innerHTML = [...db.transfers].sort((a, b) => b.date.localeCompare(a.date)).map(t =>
-    `<tr><td>${t.date}</td><td>${accName(t.from)} → ${accName(t.to)}</td><td class="num">${fmt(t.amt)}</td><td><button class="small danger" onclick="delTransfer('${t.id}')">×</button></td></tr>`).join("")
-    || `<tr><td class="muted">কোনো স্থানান্তর নেই</td></tr>`;
-  $("ecList").innerHTML = db.expenseCats.map(c => `<span class="tag">${c}</span>`).join(" ");
-  $("icList").innerHTML = db.incomeCats.map(c => `<span class="tag">${c}</span>`).join(" ");
-}
-function saveName() {
-  const v = $("setName").value.trim(); if (!v) return;
-  db.mosqueName = v; save(); renderAll();
-}
-function saveAcc(id) {
-  const a = acc(id);
-  a.name = $(`an_${id}`).value.trim() || a.name;
-  a.open = +$(`ao_${id}`).value || 0;
-  save(); renderAll();
-}
-function addAccount() {
-  const n = $("newAccName").value.trim(); if (!n) return;
-  db.accounts.push({ id: uid(), name: n, open: 0 }); $("newAccName").value = ""; save(); renderAll();
-}
-function saveTransfer() {
-  const amt = +$("trAmt").value, from = $("trFrom").value, to = $("trTo").value;
-  if (!amt) return alert("টাকার পরিমাণ দিন");
-  if (from === to) return alert("একই অ্যাকাউন্টে স্থানান্তর হবে না");
-  db.transfers.push({ id: uid(), date: $("trDate").value || todayISO(), from, to, amt });
-  $("trAmt").value = ""; save(); renderAll();
-}
-function delTransfer(id) { if (confirm("এই স্থানান্তর মুছবেন?")) { db.transfers = db.transfers.filter(t => t.id !== id); save(); renderAll(); } }
-function addCat(key, inputId) {
-  const v = $(inputId).value.trim();
-  if (!v || db[key].includes(v)) return;
-  db[key].push(v); $(inputId).value = ""; save(); renderAll();
-}
-function exportData() { $("bkText").value = JSON.stringify(db); }
-function importData() {
-  try {
-    const d = JSON.parse($("bkText").value);
-    if (!d.accounts || !d.incomes || !d.expenses) throw new Error();
-    if (!confirm("বর্তমান সব ডেটা বদলে যাবে। নিশ্চিত?")) return;
-    db = d; save(); renderAll(); alert("ইমপোর্ট সম্পন্ন");
-  } catch (e) { alert("ব্যাকআপ টেক্সট সঠিক নয়"); }
-}
+            if (!bookNo || isNaN(startPage) || isNaN(endPage) || endPage < startPage) {
+                alert('সঠিক বই নং এবং শুরুর ও শেষ পৃষ্ঠা নাম্বার দিন।');
+                return;
+            }
 
-/* ================= সব রেন্ডার ও ট্যাব ================= */
-function renderAll() {
-  renderMonth(); renderYear(); renderIncome(); renderExpense(); renderAdvance(); renderSettings();
-}
-$("monthSel").onchange = renderMonth;
-$("yearSel").onchange = renderYear;
-$("inDate").value = todayISO(); $("exDate").value = todayISO(); $("avDate").value = todayISO();
-document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
-  document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x === b));
-  document.querySelectorAll("section").forEach(s => s.classList.toggle("hidden", s.id !== "tab-" + b.dataset.tab));
-});
-renderAll();
-</script>
+            db.books.push({
+                id: 'book_' + Date.now(),
+                bookNo,
+                categoryId,
+                startPage,
+                endPage
+            });
+            saveDB();
+
+            document.getElementById('new-book-no').value = '';
+            document.getElementById('new-book-start').value = '';
+            document.getElementById('new-book-end').value = '';
+
+            refreshAllDropdowns();
+            renderRegisteredBooks();
+            alert('নতুন রশিদ বই সফলভাবে যুক্ত হয়েছে!');
+        }
+
+        function renderRegisteredBooks() {
+            const container = document.getElementById('registered-books-list');
+            if (!db.books.length) {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">এখনো কোনো রশিদ বই যুক্ত করা হয়নি।</p>';
+                return;
+            }
+            container.innerHTML = db.books.map(b => {
+                const cat = db.categories.find(c => c.id === b.categoryId);
+                const usedCount = db.receiptEntries.filter(r => r.bookId === b.id).length;
+                const totalPages = (b.endPage - b.startPage) + 1;
+                return `
+                    <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl flex justify-between items-center">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-emerald-800">${b.bookNo}</span>
+                                <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-medium">${cat ? cat.name : 'অজানা খাত'}</span>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-1">পৃষ্ঠা নং: <strong>${b.startPage} থেকে ${b.endPage}</strong> (মোট ${totalPages} পাতা)</p>
+                        </div>
+                        <div class="text-right text-xs">
+                            <span class="block text-gray-500">ব্যবহৃত: ${usedCount} পাতা</span>
+                            <span class="font-bold text-amber-700">বাকি: ${totalPages - usedCount} পাতা</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadBookPagesForEntry() {
+            const bookId = document.getElementById('entry-book-select').value;
+            const container = document.getElementById('batch-pages-container');
+            const banner = document.getElementById('book-info-banner');
+            const summaryBar = document.getElementById('batch-summary-bar');
+
+            const book = db.books.find(b => b.id === bookId);
+            if (!book) {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">প্রথমে "নতুন বই যুক্ত" ট্যাব থেকে রশিদ বই যোগ করুন।</p>';
+                banner.classList.add('hidden');
+                summaryBar.classList.add('hidden');
+                return;
+            }
+
+            const usedPages = new Set(db.receiptEntries.filter(r => r.bookId === book.id).map(r => r.pageNo));
+            const remainingPages = [];
+            for (let p = book.startPage; p <= book.endPage; p++) {
+                if (!usedPages.has(p)) remainingPages.push(p);
+            }
+
+            const cat = db.categories.find(c => c.id === book.categoryId);
+            banner.classList.remove('hidden');
+            document.getElementById('book-info-text').innerHTML = `খাত: <strong>${cat ? cat.name : ''}</strong>`;
+            document.getElementById('book-rem-pages').innerText = `বাকি পাতা: ${remainingPages.length} টি`;
+
+            if (!remainingPages.length) {
+                container.innerHTML = '<p class="text-xs text-emerald-700 font-bold text-center py-6">এই বইয়ের সবগুলো পাতা এন্ট্রি সম্পন্ন হয়েছে!</p>';
+                summaryBar.classList.add('hidden');
+                return;
+            }
+
+            summaryBar.classList.remove('hidden');
+            container.innerHTML = remainingPages.map(pageNo => `
+                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-lg border border-gray-200">
+                    <span class="w-20 text-xs font-bold text-gray-700">পৃষ্ঠা #${pageNo}</span>
+                    <input type="number" data-page="${pageNo}" oninput="recalcBatchLive()" placeholder="টাকার অংক" class="batch-amt-input flex-1 border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm font-bold bg-white">
+                    <label class="flex items-center gap-1 text-xs text-rose-600 font-medium cursor-pointer">
+                        <input type="checkbox" data-page="${pageNo}" onchange="recalcBatchLive()" class="batch-void-chk rounded"> বাতিল
+                    </label>
+                </div>
+            `).join('');
+
+            recalcBatchLive();
+        }
+
+        function recalcBatchLive() {
+            const inputs = document.querySelectorAll('.batch-amt-input');
+            const voids = document.querySelectorAll('.batch-void-chk');
+            let count = 0;
+            let total = 0;
+
+            inputs.forEach((inp, idx) => {
+                const isVoid = voids[idx].checked;
+                const val = parseFloat(inp.value) || 0;
+                if (isVoid) {
+                    inp.disabled = true;
+                    inp.value = '';
+                    count++;
+                } else {
+                    inp.disabled = false;
+                    if (val > 0) {
+                        count++;
+                        total += val;
+                    }
+                }
+            });
+
+            document.getElementById('live-page-count').innerText = count;
+            document.getElementById('live-total-amount').innerText = formatBDT(total);
+        }
+
+        function saveBatchReceipts() {
+            const bookId = document.getElementById('entry-book-select').value;
+            const date = document.getElementById('entry-date').value;
+            if (!bookId || !date) return;
+
+            const inputs = document.querySelectorAll('.batch-amt-input');
+            const voids = document.querySelectorAll('.batch-void-chk');
+            let added = 0;
+
+            inputs.forEach((inp, idx) => {
+                const pageNo = parseInt(inp.dataset.page);
+                const isVoid = voids[idx].checked;
+                const amount = parseFloat(inp.value) || 0;
+
+                if (isVoid || amount > 0) {
+                    db.receiptEntries.push({
+                        id: 'rec_' + Date.now() + '_' + pageNo,
+                        bookId,
+                        pageNo,
+                        date,
+                        amount: isVoid ? 0 : amount,
+                        voided: isVoid
+                    });
+                    added++;
+                }
+            });
+
+            if (added === 0) {
+                alert('কমপক্ষে একটি পৃষ্ঠার টাকার অংক লিখুন।');
+                return;
+            }
+
+            saveDB();
+            loadBookPagesForEntry();
+            renderRegisteredBooks();
+            alert(`${added} টি রশিদ পাতার হিসাব সফলভাবে সেভ হয়েছে!`);
+        }
+
+        function renderBookAudit() {
+            const bookId = document.getElementById('audit-book-select').value;
+            const book = db.books.find(b => b.id === bookId);
+            const sumBox = document.getElementById('audit-book-summary');
+            const listBox = document.getElementById('audit-pages-list');
+
+            if (!book) {
+                sumBox.innerHTML = 'কোনো বই পাওয়া যায়নি।';
+                listBox.innerHTML = '';
+                return;
+            }
+
+            const entries = db.receiptEntries.filter(r => r.bookId === book.id).sort((a, b) => a.pageNo - b.pageNo);
+            const totalAmount = entries.reduce((s, r) => s + (r.voided ? 0 : r.amount), 0);
+            const cat = db.categories.find(c => c.id === book.categoryId);
+
+            sumBox.innerHTML = `
+                <div class="flex justify-between">
+                    <span>বই নং: <strong>${book.bookNo}</strong> (${cat ? cat.name : ''})</span>
+                    <span>পৃষ্ঠা: <strong>${book.startPage} - ${book.endPage}</strong></span>
+                </div>
+                <div class="flex justify-between pt-1 border-t border-emerald-200 mt-1">
+                    <span>এন্ট্রিকৃত পাতা: <strong>${entries.length} টি</strong></span>
+                    <span class="text-sm font-bold text-emerald-900">বইয়ের মোট আদায়: ${formatBDT(totalAmount)}</span>
+                </div>
+            `;
+
+            if (!entries.length) {
+                listBox.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">এই বইয়ে এখনো কোনো এন্ট্রি দেওয়া হয়নি।</p>';
+                return;
+            }
+
+            listBox.innerHTML = entries.map(r => `
+                <div class="flex justify-between items-center p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs">
+                    <div>
+                        <span class="font-bold text-gray-800">পৃষ্ঠা #${r.pageNo}</span>
+                        <span class="text-gray-500 ml-2">${r.date}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold ${r.voided ? 'text-rose-600' : 'text-emerald-700'}">
+                            ${r.voided ? 'বাতিল পাতা' : formatBDT(r.amount)}
+                        </span>
+                        <button onclick="openEditModal('receipt', '${r.id}')" class="bg-amber-100 text-amber-800 px-2 py-1 rounded font-bold">✏️ Edit</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==================== DIRECT INCOME, EXPENSE & BANK ====================
+        function saveDirectIncome() {
+            const date = document.getElementById('inc-date').value;
+            const categoryId = document.getElementById('inc-category').value;
+            const amount = parseFloat(document.getElementById('inc-amount').value);
+            const mode = document.getElementById('inc-mode').value;
+            const note = document.getElementById('inc-note').value.trim();
+
+            if (!date || isNaN(amount) || amount <= 0) {
+                alert('সঠিক তারিখ ও টাকার পরিমাণ লিখুন।');
+                return;
+            }
+
+            db.transactions.push({
+                id: 'tx_' + Date.now(),
+                type: 'income',
+                date,
+                categoryId,
+                amount,
+                mode,
+                note
+            });
+            saveDB();
+            document.getElementById('inc-amount').value = '';
+            document.getElementById('inc-note').value = '';
+            alert('সরাসরি আয় সংরক্ষিত হয়েছে!');
+        }
+
+        function saveExpenseVoucher() {
+            const date = document.getElementById('exp-date').value;
+            const voucherNo = document.getElementById('exp-voucher').value.trim();
+            const categoryId = document.getElementById('exp-category').value;
+            const amount = parseFloat(document.getElementById('exp-amount').value);
+            const mode = document.getElementById('exp-mode').value;
+            const note = document.getElementById('exp-note').value.trim();
+
+            if (!date || isNaN(amount) || amount <= 0) {
+                alert('সঠিক তারিখ ও খরচের পরিমাণ লিখুন।');
+                return;
+            }
+
+            db.transactions.push({
+                id: 'tx_' + Date.now(),
+                type: 'expense',
+                date,
+                voucherNo,
+                categoryId,
+                amount,
+                mode,
+                note
+            });
+            saveDB();
+            document.getElementById('exp-voucher').value = '';
+            document.getElementById('exp-amount').value = '';
+            document.getElementById('exp-note').value = '';
+            alert('ব্যয় ভাউচার সংরক্ষিত হয়েছে!');
+        }
+
+        function saveBankTransfer() {
+            const date = document.getElementById('bank-date').value;
+            const transferDir = document.getElementById('bank-type').value;
+            const amount = parseFloat(document.getElementById('bank-amount').value);
+            const note = document.getElementById('bank-note').value.trim();
+
+            if (!date || isNaN(amount) || amount <= 0) {
+                alert('সঠিক তারিখ ও টাকার পরিমাণ লিখুন।');
+                return;
+            }
+
+            db.transactions.push({
+                id: 'tx_' + Date.now(),
+                type: 'bank_transfer',
+                date,
+                transferDir,
+                amount,
+                note
+            });
+            saveDB();
+            document.getElementById('bank-amount').value = '';
+            document.getElementById('bank-note').value = '';
+            alert('ক্যাশ-ব্যাংক ট্রান্সফার সংরক্ষিত হয়েছে!');
+        }
+
+        function addCategory() {
+            const type = document.getElementById('new-cat-type').value;
+            const name = document.getElementById('new-cat-name').value.trim();
+            if (!name) return;
+
+            db.categories.push({
+                id: 'cat_' + Date.now(),
+                name,
+                type
+            });
+            saveDB();
+            document.getElementById('new-cat-name').value = '';
+            refreshAllDropdowns();
+            alert('নতুন খাত যুক্ত হয়েছে!');
+        }
+
+        // ==================== MONTHLY CALCULATIONS & DASHBOARD ====================
+        function getMonthlyMetrics(year, month) {
+            const startOfMonth = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+            const endOfMonth = `${year}-${String(month + 1).padStart(2, '0')}-31`;
+
+            let prevCash = Number(db.settings.openingCash || 0);
+            let prevBank = Number(db.settings.openingBank || 0);
+
+            let monthIncome = 0;
+            let monthExpense = 0;
+            let monthCashDelta = 0;
+            let monthBankDelta = 0;
+
+            // 1. Receipt Entries (Always Cash Income)
+            db.receiptEntries.forEach(r => {
+                if (r.voided) return;
+                if (r.date < startOfMonth) {
+                    prevCash += r.amount;
+                } else if (r.date >= startOfMonth && r.date <= endOfMonth) {
+                    monthIncome += r.amount;
+                    monthCashDelta += r.amount;
+                }
+            });
+
+            // 2. Transactions
+            db.transactions.forEach(t => {
+                if (t.date < startOfMonth) {
+                    if (t.type === 'income') {
+                        if (t.mode === 'bank') prevBank += t.amount;
+                        else prevCash += t.amount;
+                    } else if (t.type === 'expense') {
+                        if (t.mode === 'bank') prevBank -= t.amount;
+                        else prevCash -= t.amount;
+                    } else if (t.type === 'bank_transfer') {
+                        if (t.transferDir === 'cash_to_bank') {
+                            prevCash -= t.amount;
+                            prevBank += t.amount;
+                        } else {
+                            prevBank -= t.amount;
+                            prevCash += t.amount;
+                        }
+                    }
+                } else if (t.date >= startOfMonth && t.date <= endOfMonth) {
+                    if (t.type === 'income') {
+                        monthIncome += t.amount;
+                        if (t.mode === 'bank') monthBankDelta += t.amount;
+                        else monthCashDelta += t.amount;
+                    } else if (t.type === 'expense') {
+                        monthExpense += t.amount;
+                        if (t.mode === 'bank') monthBankDelta -= t.amount;
+                        else monthCashDelta -= t.amount;
+                    } else if (t.type === 'bank_transfer') {
+                        if (t.transferDir === 'cash_to_bank') {
+                            monthCashDelta -= t.amount;
+                            monthBankDelta += t.amount;
+                        } else {
+                            monthBankDelta -= t.amount;
+                            monthCashDelta += t.amount;
+                        }
+                    }
+                }
+            });
+
+            const currCash = prevCash + monthCashDelta;
+            const currBank = prevBank + monthBankDelta;
+
+            return {
+                prevCash,
+                prevBank,
+                monthIncome,
+                monthExpense,
+                monthNet: monthIncome - monthExpense,
+                currCash,
+                currBank,
+                totalFund: currCash + currBank
+            };
+        }
+
+        function renderDashboard() {
+            const month = parseInt(document.getElementById('dash-month').value);
+            const year = parseInt(document.getElementById('dash-year').value);
+            const m = getMonthlyMetrics(year, month);
+
+            document.getElementById('dash-selected-label').innerText = `${bnMonths[month]} ${year}`;
+            document.getElementById('dash-month-income').innerText = formatBDT(m.monthIncome);
+            document.getElementById('dash-month-expense').innerText = formatBDT(m.monthExpense);
+            
+            const netEl = document.getElementById('dash-month-net');
+            netEl.innerText = formatBDT(m.monthNet);
+            netEl.className = `text-sm font-bold ${m.monthNet >= 0 ? 'text-emerald-700' : 'text-rose-700'}`;
+
+            document.getElementById('dash-prev-cash').innerText = formatBDT(m.prevCash);
+            document.getElementById('dash-prev-bank').innerText = formatBDT(m.prevBank);
+            document.getElementById('dash-curr-cash').innerText = formatBDT(m.currCash);
+            document.getElementById('dash-curr-bank').innerText = formatBDT(m.currBank);
+            document.getElementById('dash-total-fund').innerText = formatBDT(m.totalFund);
+
+            // Render Transaction List for selected month with Corner Edit button
+            const startOfMonth = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+            const endOfMonth = `${year}-${String(month + 1).padStart(2, '0')}-31`;
+
+            const items = [];
+            db.receiptEntries.forEach(r => {
+                if (!r.voided && r.date >= startOfMonth && r.date <= endOfMonth) {
+                    const book = db.books.find(b => b.id === r.bookId);
+                    const cat = book ? db.categories.find(c => c.id === book.categoryId) : null;
+                    items.push({
+                        kind: 'receipt',
+                        id: r.id,
+                        date: r.date,
+                        title: `${cat ? cat.name : 'রশিদ আয়'} (${book ? book.bookNo : ''}, পৃষ্ঠা #${r.pageNo})`,
+                        amount: r.amount,
+                        badge: 'আয় (রশিদ)',
+                        badgeColor: 'bg-emerald-100 text-emerald-800',
+                        amtColor: 'text-emerald-700'
+                    });
+                }
+            });
+
+            db.transactions.forEach(t => {
+                if (t.date >= startOfMonth && t.date <= endOfMonth) {
+                    const cat = db.categories.find(c => c.id === t.categoryId);
+                    if (t.type === 'income') {
+                        items.push({
+                            kind: 'tx',
+                            id: t.id,
+                            date: t.date,
+                            title: `${cat ? cat.name : 'সরাসরি আয়'} ${t.note ? '- ' + t.note : ''}`,
+                            amount: t.amount,
+                            badge: t.mode === 'bank' ? 'আয় (ব্যাংক)' : 'আয় (ক্যাশ)',
+                            badgeColor: 'bg-emerald-100 text-emerald-800',
+                            amtColor: 'text-emerald-700'
+                        });
+                    } else if (t.type === 'expense') {
+                        items.push({
+                            kind: 'tx',
+                            id: t.id,
+                            date: t.date,
+                            title: `${cat ? cat.name : 'ব্যয়'} ${t.voucherNo ? '[ভাউচার: ' + t.voucherNo + ']' : ''} ${t.note ? '- ' + t.note : ''}`,
+                            amount: t.amount,
+                            badge: t.mode === 'bank' ? 'ব্যয় (ব্যাংক)' : 'ব্যয় (ক্যাশ)',
+                            badgeColor: 'bg-rose-100 text-rose-800',
+                            amtColor: 'text-rose-700'
+                        });
+                    } else if (t.type === 'bank_transfer') {
+                        items.push({
+                            kind: 'tx',
+                            id: t.id,
+                            date: t.date,
+                            title: `${t.transferDir === 'cash_to_bank' ? 'ক্যাশ থেকে ব্যাংকে জমা' : 'ব্যাংক থেকে উত্তোলন'} ${t.note ? '- ' + t.note : ''}`,
+                            amount: t.amount,
+                            badge: 'ক্যাশ-ব্যাংক',
+                            badgeColor: 'bg-indigo-100 text-indigo-800',
+                            amtColor: 'text-indigo-700'
+                        });
+                    }
+                }
+            });
+
+            items.sort((a, b) => b.date.localeCompare(a.date));
+
+            const listEl = document.getElementById('dash-tx-list');
+            if (!items.length) {
+                listEl.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">এই মাসে কোনো লেনদেন পাওয়া যায়নি।</p>';
+                return;
+            }
+
+            listEl.innerHTML = items.map(item => `
+                <div class="relative p-3 bg-gray-50 border border-gray-200 rounded-xl flex justify-between items-start gap-2">
+                    <div class="pr-12">
+                        <div class="flex items-center gap-1.5 mb-1">
+                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${item.badgeColor}">${item.badge}</span>
+                            <span class="text-[11px] text-gray-500">${item.date}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-gray-800">${item.title}</p>
+                        <p class="text-sm font-bold ${item.amtColor} mt-0.5">${formatBDT(item.amount)}</p>
+                    </div>
+                    <!-- Corner Edit Option -->
+                    <button onclick="openEditModal('${item.kind}', '${item.id}')" class="absolute top-2 right-2 bg-white hover:bg-amber-50 border border-gray-300 text-gray-700 px-2 py-1 rounded-lg text-[11px] font-bold shadow-sm">
+                        ✏️ Edit
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // ==================== EDIT MODAL LOGIC ====================
+        function openEditModal(kind, id) {
+            currentEditTarget = { kind, id };
+            const body = document.getElementById('edit-modal-body');
+
+            if (kind === 'receipt') {
+                const r = db.receiptEntries.find(x => x.id === id);
+                if (!r) return;
+                document.getElementById('edit-modal-title').innerText = `রশিদ পাতা #${r.pageNo} সংশোধন`;
+                body.innerHTML = `
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">তারিখ</label>
+                        <input type="date" id="edit-rec-date" value="${r.date}" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">টাকার পরিমাণ</label>
+                        <input type="number" id="edit-rec-amt" value="${r.amount}" class="w-full border border-gray-300 rounded-lg p-2 text-sm font-bold">
+                    </div>
+                    <label class="flex items-center gap-2 text-xs text-rose-700 font-semibold">
+                        <input type="checkbox" id="edit-rec-void" ${r.voided ? 'checked' : ''}> পাতাটি বাতিল (Void) হিসেবে চিহ্নিত করুন
+                    </label>
+                `;
+            } else {
+                const t = db.transactions.find(x => x.id === id);
+                if (!t) return;
+                document.getElementById('edit-modal-title').innerText = 'লেনদেন সংশোধন করুন';
+                const catOpts = db.categories.filter(c => c.type === t.type).map(c => 
+                    `<option value="${c.id}" ${c.id === t.categoryId ? 'selected' : ''}>${c.name}</option>`
+                ).join('');
+
+                body.innerHTML = `
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">তারিখ</label>
+                        <input type="date" id="edit-tx-date" value="${t.date}" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                    </div>
+                    ${t.type !== 'bank_transfer' ? `
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">খাত</label>
+                        <select id="edit-tx-cat" class="w-full border border-gray-300 rounded-lg p-2 text-sm">${catOpts}</select>
+                    </div>` : ''}
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">টাকার পরিমাণ</label>
+                        <input type="number" id="edit-tx-amt" value="${t.amount}" class="w-full border border-gray-300 rounded-lg p-2 text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">বিবরণ / নোট</label>
+                        <input type="text" id="edit-tx-note" value="${t.note || ''}" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                    </div>
+                `;
+            }
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            currentEditTarget = null;
+        }
+
+        function saveEditedEntry() {
+            if (!currentEditTarget) return;
+            if (currentEditTarget.kind === 'receipt') {
+                const r = db.receiptEntries.find(x => x.id === currentEditTarget.id);
+                if (r) {
+                    r.date = document.getElementById('edit-rec-date').value;
+                    r.voided = document.getElementById('edit-rec-void').checked;
+                    r.amount = r.voided ? 0 : (parseFloat(document.getElementById('edit-rec-amt').value) || 0);
+                }
+            } else {
+                const t = db.transactions.find(x => x.id === currentEditTarget.id);
+                if (t) {
+                    t.date = document.getElementById('edit-tx-date').value;
+                    if (t.type !== 'bank_transfer') {
+                        t.categoryId = document.getElementById('edit-tx-cat').value;
+                    }
+                    t.amount = parseFloat(document.getElementById('edit-tx-amt').value) || 0;
+                    t.note = document.getElementById('edit-tx-note').value.trim();
+                }
+            }
+            saveDB();
+            closeEditModal();
+            renderDashboard();
+            renderBookAudit();
+            renderCategoryLedger();
+        }
+
+        function deleteCurrentEditEntry() {
+            if (!currentEditTarget || !confirm('আপনি কি নিশ্চিতভাবে এই এন্ট্রিটি মুছে ফেলতে চান?')) return;
+            if (currentEditTarget.kind === 'receipt') {
+                db.receiptEntries = db.receiptEntries.filter(x => x.id !== currentEditTarget.id);
+            } else {
+                db.transactions = db.transactions.filter(x => x.id !== currentEditTarget.id);
+            }
+            saveDB();
+            closeEditModal();
+            renderDashboard();
+            renderBookAudit();
+            renderCategoryLedger();
+        }
+
+        // ==================== LEDGER & YEARLY STATEMENT ====================
+        function renderCategoryLedger() {
+            const catId = document.getElementById('ledger-cat-select').value;
+            const year = document.getElementById('ledger-year-select').value;
+            const startY = `${year}-01-01`;
+            const endY = `${year}-12-31`;
+
+            const rows = [];
+            // From Receipt Books
+            db.receiptEntries.forEach(r => {
+                if (r.voided || r.date < startY || r.date > endY) return;
+                const book = db.books.find(b => b.id === r.bookId);
+                if (book && book.categoryId === catId) {
+                    rows.push({
+                        kind: 'receipt',
+                        id: r.id,
+                        date: r.date,
+                        desc: `${book.bookNo} - পৃষ্ঠা #${r.pageNo}`,
+                        amount: r.amount
+                    });
+                }
+            });
+
+            // From Transactions
+            db.transactions.forEach(t => {
+                if (t.categoryId === catId && t.date >= startY && t.date <= endY) {
+                    rows.push({
+                        kind: 'tx',
+                        id: t.id,
+                        date: t.date,
+                        desc: `${t.voucherNo ? 'ভাউচার: ' + t.voucherNo + ' | ' : ''}${t.note || 'লেনদেন'} (${t.mode === 'bank' ? 'ব্যাংক' : 'ক্যাশ'})`,
+                        amount: t.amount
+                    });
+                }
+            });
+
+            rows.sort((a, b) => a.date.localeCompare(b.date));
+            const total = rows.reduce((s, x) => s + x.amount, 0);
+            document.getElementById('ledger-total-val').innerText = formatBDT(total);
+
+            const listEl = document.getElementById('ledger-entries-list');
+            if (!rows.length) {
+                listEl.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">এই খাতে নির্বাচিত বছরে কোনো হিসাব নেই।</p>';
+                return;
+            }
+
+            listEl.innerHTML = rows.map(r => `
+                <div class="flex justify-between items-center p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs">
+                    <div>
+                        <span class="text-gray-500 block">${r.date}</span>
+                        <span class="font-semibold text-gray-800">${r.desc}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-gray-900">${formatBDT(r.amount)}</span>
+                        <button onclick="openEditModal('${r.kind}', '${r.id}')" class="bg-white border px-2 py-1 rounded text-[11px]">✏️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderYearlyStatement() {
+            const year = parseInt(document.getElementById('yearly-report-year').value);
+            const tbody = document.getElementById('yearly-table-body');
+            let sumInc = 0, sumExp = 0;
+
+            let html = '';
+            for (let m = 0; m < 12; m++) {
+                const metrics = getMonthlyMetrics(year, m);
+                sumInc += metrics.monthIncome;
+                sumExp += metrics.monthExpense;
+                html += `
+                    <tr class="border-b">
+                        <td class="p-2 border font-semibold">${bnMonths[m]}</td>
+                        <td class="p-2 border text-right text-emerald-700 font-medium">${formatBDT(metrics.monthIncome)}</td>
+                        <td class="p-2 border text-right text-rose-700 font-medium">${formatBDT(metrics.monthExpense)}</td>
+                        <td class="p-2 border text-right font-bold">${formatBDT(metrics.monthNet)}</td>
+                    </tr>
+                `;
+            }
+            tbody.innerHTML = html;
+            document.getElementById('yearly-table-foot').innerHTML = `
+                <tr>
+                    <td class="p-2 border">সর্বমোট (${year})</td>
+                    <td class="p-2 border text-right text-emerald-800">${formatBDT(sumInc)}</td>
+                    <td class="p-2 border text-right text-rose-800">${formatBDT(sumExp)}</td>
+                    <td class="p-2 border text-right">${formatBDT(sumInc - sumExp)}</td>
+                </tr>
+            `;
+        }
+
+        // ==================== SETTINGS MODAL ====================
+        function openMosqueModal() {
+            document.getElementById('set-mosque-name').value = db.settings.mosqueName;
+            document.getElementById('set-mosque-address').value = db.settings.address;
+            document.getElementById('set-open-cash').value = db.settings.openingCash;
+            document.getElementById('set-open-bank').value = db.settings.openingBank;
+            document.getElementById('mosque-modal').classList.remove('hidden');
+        }
+
+        function closeMosqueModal() {
+            document.getElementById('mosque-modal').classList.add('hidden');
+        }
+
+        function saveMosqueSettings() {
+            db.settings.mosqueName = document.getElementById('set-mosque-name').value.trim() || 'মসজিদ হিসাব';
+            db.settings.address = document.getElementById('set-mosque-address').value.trim();
+            db.settings.openingCash = parseFloat(document.getElementById('set-open-cash').value) || 0;
+            db.settings.openingBank = parseFloat(document.getElementById('set-open-bank').value) || 0;
+            saveDB();
+            document.getElementById('header-mosque-name').innerText = db.settings.mosqueName;
+            closeMosqueModal();
+            renderDashboard();
+        }
+
+        // ==================== BACKUP (EXCEL CSV & JSON) ====================
+        function exportToExcelCSV() {
+            let csv = '\uFEFFতারিখ,ধরন,খাত/বই,বিবরণ/পৃষ্ঠা,মাধ্যম,টাকার পরিমাণ\n';
+
+            db.receiptEntries.forEach(r => {
+                if (r.voided) return;
+                const book = db.books.find(b => b.id === r.bookId);
+                const cat = book ? db.categories.find(c => c.id === book.categoryId) : null;
+                csv += `${r.date},আয় (রশিদ),"${cat ? cat.name : ''}","${book ? book.bookNo : ''} পাতা #${r.pageNo}",ক্যাশ,${r.amount}\n`;
+            });
+
+            db.transactions.forEach(t => {
+                const cat = db.categories.find(c => c.id === t.categoryId);
+                const typeLabel = t.type === 'income' ? 'সরাসরি আয়' : (t.type === 'expense' ? 'ব্যয় ভাউচার' : 'ক্যাশ-ব্যাংক');
+                const modeLabel = t.mode === 'bank' ? 'ব্যাংক' : 'ক্যাশ';
+                csv += `${t.date},${typeLabel},"${cat ? cat.name : ''}","${t.note || ''}",${modeLabel},${t.amount}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Mosque_Account_${todayISO()}.csv`;
+            link.click();
+        }
+
+        function exportFullJSON() {
+            const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Mosque_Backup_${todayISO()}.json`;
+            link.click();
+        }
+
+        function importFullJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed && parsed.categories && parsed.transactions) {
+                        db = parsed;
+                        saveDB();
+                        refreshAllDropdowns();
+                        renderDashboard();
+                        alert('ব্যাকআপ সফলভাবে রিস্টোর হয়েছে!');
+                    } else {
+                        alert('সঠিক ব্যাকআপ ফাইল নয়।');
+                    }
+                } catch (err) {
+                    alert('ফাইল পড়তে সমস্যা হয়েছে।');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ==================== MONTHLY PDF / PRINT REPORT ====================
+        function printMonthlyReport() {
+            const month = parseInt(document.getElementById('dash-month').value);
+            const year = parseInt(document.getElementById('dash-year').value);
+            const m = getMonthlyMetrics(year, month);
+
+            const startOfMonth = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+            const endOfMonth = `${year}-${String(month + 1).padStart(2, '0')}-31`;
+
+            // Category-wise breakdown for the selected month
+            const incMap = {};
+            const expMap = {};
+
+            db.receiptEntries.forEach(r => {
+                if (!r.voided && r.date >= startOfMonth && r.date <= endOfMonth) {
+                    const book = db.books.find(b => b.id === r.bookId);
+                    const cat = book ? db.categories.find(c => c.id === book.categoryId) : null;
+                    const name = cat ? cat.name : 'রশিদ আদায়';
+                    incMap[name] = (incMap[name] || 0) + r.amount;
+                }
+            });
+
+            db.transactions.forEach(t => {
+                if (t.date >= startOfMonth && t.date <= endOfMonth) {
+                    const cat = db.categories.find(c => c.id === t.categoryId);
+                    const name = cat ? cat.name : 'অন্যান্য';
+                    if (t.type === 'income') incMap[name] = (incMap[name] || 0) + t.amount;
+                    if (t.type === 'expense') expMap[name] = (expMap[name] || 0) + t.amount;
+                }
+            });
+
+            const incRows = Object.entries(incMap).map(([k, v]) => `<tr><td class="border p-2">${k}</td><td class="border p-2 text-right">${formatBDT(v)}</td></tr>`).join('') || '<tr><td colspan="2" class="border p-2 text-center">কোনো আয় নেই</td></tr>';
+            const expRows = Object.entries(expMap).map(([k, v]) => `<tr><td class="border p-2">${k}</td><td class="border p-2 text-right">${formatBDT(v)}</td></tr>`).join('') || '<tr><td colspan="2" class="border p-2 text-center">কোনো ব্যয় নেই</td></tr>';
+
+            const printArea = document.getElementById('print-area');
+            printArea.innerHTML = `
+                <div style="font-family: 'Hind Siliguri', sans-serif; max-width: 750px; margin: auto;">
+                    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+                        <h1 style="font-size: 22px; font-weight: bold; margin: 0;">${db.settings.mosqueName}</h1>
+                        <p style="font-size: 13px; margin: 2px 0;">${db.settings.address}</p>
+                        <h2 style="font-size: 16px; font-weight: bold; margin-top: 8px; background: #eee; padding: 4px;">মাসিক আয়-ব্যয় ও তহবিল বিবরণী: ${bnMonths[month]} ${year}</h2>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                        <div style="flex: 1;">
+                            <h3 style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 6px;">আয়ের বিবরণ</h3>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                ${incRows}
+                                <tr style="font-weight: bold; background: #f3f4f6;">
+                                    <td class="border p-2">চলতি মাসের মোট আয়</td>
+                                    <td class="border p-2 text-right">${formatBDT(m.monthIncome)}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 6px;">ব্যয়ের বিবরণ</h3>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                ${expRows}
+                                <tr style="font-weight: bold; background: #f3f4f6;">
+                                    <td class="border p-2">চলতি মাসের মোট ব্যয়</td>
+                                    <td class="border p-2 text-right">${formatBDT(m.monthExpense)}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h3 style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 8px;">তহবিল স্থিতি সারসংক্ষেপ</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 40px;">
+                        <tr><td class="border p-2">পূর্ববর্তী মাসের হাতে নগদ (Cash)</td><td class="border p-2 text-right">${formatBDT(m.prevCash)}</td></tr>
+                        <tr><td class="border p-2">পূর্ববর্তী মাসের ব্যাংক ব্যালেন্স</td><td class="border p-2 text-right">${formatBDT(m.prevBank)}</td></tr>
+                        <tr><td class="border p-2">চলতি মাসের নিট উদ্বৃত্ত / (ঘাটতি)</td><td class="border p-2 text-right">${formatBDT(m.monthNet)}</td></tr>
+                        <tr style="font-weight: bold;"><td class="border p-2">মাস শেষে হাতে নগদ (Cash)</td><td class="border p-2 text-right">${formatBDT(m.currCash)}</td></tr>
+                        <tr style="font-weight: bold;"><td class="border p-2">মাস শেষে ব্যাংক ব্যালেন্স</td><td class="border p-2 text-right">${formatBDT(m.currBank)}</td></tr>
+                        <tr style="font-weight: bold; background: #e5e7eb; font-size: 15px;"><td class="border p-2">সর্বমোট তহবিল (ক্যাশ + ব্যাংক)</td><td class="border p-2 text-right">${formatBDT(m.totalFund)}</td></tr>
+                    </table>
+
+                    <div style="display: flex; justify-content: space-between; margin-top: 60px; font-size: 13px; font-weight: bold;">
+                        <div style="border-top: 1px solid #000; padding-top: 5px; width: 150px; text-align: center;">ক্যাশিয়ার / কোষাধ্যক্ষ</div>
+                        <div style="border-top: 1px solid #000; padding-top: 5px; width: 150px; text-align: center;">সাধারণ সম্পাদক</div>
+                        <div style="border-top: 1px solid #000; padding-top: 5px; width: 150px; text-align: center;">সভাপতি</div>
+                    </div>
+                </div>
+            `;
+
+            window.print();
+        }
+    </script>
 </body>
 </html>
